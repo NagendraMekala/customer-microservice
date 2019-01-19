@@ -1,9 +1,10 @@
+info:
+  component: Edge Server
+
 spring:
   application:
     name: gateway-service
- info:
-  component: Edge Server
-  
+ 
 endpoints:
   restart:
     enabled: true
@@ -25,7 +26,7 @@ zuul:
 ribbon:
   eureka:
     enabled: true
-
+    
 eureka:
   client:
     serviceUrl:
@@ -39,3 +40,4 @@ logging:
   level:
     ROOT: INFO
     org.springframework.web: DEBUG
+    
