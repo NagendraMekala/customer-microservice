@@ -1,0 +1,19 @@
+# Start with a base image containing Java runtime
+FROM alpine-jdk:base
+
+MAINTAINER nagendra.kldm@gmail.com
+
+RUN apk --no-cache add netcat-openbsd
+
+# The application's jar file
+copy customer-service-0.0.1-SNAPSHOT.jar /opt/lib/
+
+COPY customer-service-entrypoint.sh /opt/lib/
+
+RUN chmod 755 /opt/lib/customer-service-entrypoint.sh
+
+# Make port 3333 available to the world outside this container
+EXPOSE 3333
+
+# Add a volume pointing to /var/lib/customer-repo
+VOLUME /var/lib/customer-repo
