@@ -15,6 +15,12 @@ import com.mng.spring.main.model.Account;
 public interface AccountClient {
 
     @RequestMapping(method = RequestMethod.GET, value = "/accounts/customer/{customerId}")
-    List<Account> getAccounts(@PathVariable("customerId") Integer customerId);
+    public List<Account> getAccounts(@PathVariable("customerId") Integer customerId);
+    
+    @RequestMapping(value = "/accounts/elkdemo")
+    public String helloWorld();
+    
+    @RequestMapping(value = "/accounts/exception")
+    public String exception();
     
 }

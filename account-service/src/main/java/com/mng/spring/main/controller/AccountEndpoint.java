@@ -1,10 +1,15 @@
 package com.mng.spring.main.controller;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
+
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +21,9 @@ public class AccountEndpoint {
 
 	private List<Account> accounts;
 	
-	protected Logger logger = Logger.getLogger(AccountEndpoint.class.getName());
+	 private static final Logger logger = LoggerFactory.getLogger(AccountEndpoint.class);
+	
+	//protected Logger logger = Logger.getLogger(AccountEndpoint.class.getName());
 	
 	public AccountEndpoint() {
 		accounts = new ArrayList<>();
@@ -51,5 +58,32 @@ public class AccountEndpoint {
 	public String hello() {
 		return "wel come to account service";
 	}
+    
+    @RequestMapping(value = "/accounts/elkdemo")
+    public String helloWorld() {
+        String response = "Hello user ! " + new Date();
+        logger.info("/elkdemo - &gt; " + response);
+        return response;
+    }
+    
+    @RequestMapping(value = "/accounts/exception")
+    public String exception() {
+        String rsp = "";
+        try {
+            int i = 1 / 0;
+            // should get exception
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info(e.toString());
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            String sStackTrace = sw.toString(); // stack trace as a string
+            logger.info("Exception As String :: - &gt; "+sStackTrace);
+             
+            rsp = sStackTrace;
+        }
+        return rsp;
+    }
 	
 }

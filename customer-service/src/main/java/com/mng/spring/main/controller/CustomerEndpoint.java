@@ -2,8 +2,9 @@ package com.mng.spring.main.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,9 @@ public class CustomerEndpoint {
 	@Autowired
 	private AccountClient accountClient;
 	
-	protected Logger logger = Logger.getLogger(CustomerEndpoint.class.getName());
+	 private static final Logger logger = LoggerFactory.getLogger(CustomerEndpoint.class);
+	
+	//protected Logger logger = Logger.getLogger(CustomerEndpoint.class.getName());
 	
 	private List<Customer> customers;
 	
@@ -61,4 +64,18 @@ public class CustomerEndpoint {
 		return "welcome to cstomer service application";
 	}
 	
+	@RequestMapping(value = "/customers/elk")
+	public String helloWorld1() {
+		String response = accountClient.helloWorld();
+		logger.info("/elk - &gt; " + response);
+
+		try {
+			String exceptionrsp = accountClient.exception();
+			logger.info("/elk trying to print exception - &gt; " + exceptionrsp);
+			response = response + " === " + exceptionrsp;
+		} catch (Exception e) {
+			// exception should not reach here. Really bad practice 🙂
+		}
+		return response;
+	}
 }
