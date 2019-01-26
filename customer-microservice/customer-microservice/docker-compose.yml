@@ -1,0 +1,130 @@
+version: '2.2'
+services:
+    zipkin-server:
+        container_name: zipkin-server
+        build:
+            context: .
+            dockerfile: Dockerfile-zipkin-service
+        image: zipkin-server:latest
+        expose:
+            - 9411
+        ports:
+            - 9411:9411
+        networks:
+            - spring-cloud-network
+        logging:
+            driver: json-file
+    discovery-service:
+        container_name: discovery-service
+        build:
+            context: .
+            dockerfile: Dockerfile-discovery-service
+        image: discovery-service:latest
+        entrypoint: /opt/lib/discovery-service-entrypoint.sh
+        expose:
+            - 8761
+        ports:
+            - 8761:8761
+        environment:
+            - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka
+            - SPRING_SLEUTH_ENABLED=true
+            - SPRING_SLEUTH_SAMPLER_PERCENTAGE=1
+            - SPRING_ZIPKIN_BASE-URL=http://zipkin-server:9411
+        networks:
+            - spring-cloud-network
+        links:
+            - zipkin-server:zipkin-server
+        depends_on:
+            - zipkin-server
+        logging:
+            driver: json-file
+    account-service:
+        container_name: account-service
+        build:
+            context: .
+            dockerfile: Dockerfile-account-service
+        image: account-service:latest
+        entrypoint: /opt/lib/account-service-entrypoint.sh             
+        expose:
+            - 2222
+        ports:
+            - 2222:2222
+        environment:
+            - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka
+            - SPRING_SLEUTH_ENABLED=true
+            - SPRING_SLEUTH_SAMPLER_PERCENTAGE=1
+            - SPRING_ZIPKIN_BASE-URL=http://zipkin-server:9411
+        networks:
+            - spring-cloud-network
+        links:
+            - zipkin-server:zipkin-server
+            - discovery-service:discovery-service
+        depends_on:
+            - zipkin-server
+            - discovery-service
+        logging:
+            driver: json-file
+    customer-service:
+        container_name: customer-service
+        build:
+            context: .
+            dockerfile: Dockerfile-customer-service
+        image: customer-service:latest
+        entrypoint: /opt/lib/customer-service-entrypoint.sh
+        expose:
+            - 3333
+        ports:
+            - 3333:3333
+        environment:
+            - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka
+            - SPRING_SLEUTH_ENABLED=true
+            - SPRING_SLEUTH_SAMPLER_PERCENTAGE=1
+            - SPRING_ZIPKIN_BASE-URL=http://zipkin-server:9411
+        networks:
+            - spring-cloud-network
+        links:
+            - zipkin-server:zipkin-server
+            - discovery-service:discovery-service
+            - account-service:account-service
+        depends_on:
+            - zipkin-server
+            - discovery-service
+            - account-service
+        logging:
+            driver: json-file
+    gateway-service:
+        container_name: gateway-service
+        build:
+            context: .
+            dockerfile: Dockerfile-gateway-service
+        image: gateway-service:latest
+        entrypoint: /opt/lib/gateway-service-entrypoint.sh
+        expose:
+            - 8765
+        ports:
+            - 8765:8765
+        environment:
+            - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka
+            - SPRING_SLEUTH_ENABLED=true
+            - SPRING_SLEUTH_SAMPLER_PERCENTAGE=1
+            - SPRING_ZIPKIN_BASE-URL=http://zipkin-server:9411
+        networks:
+            - spring-cloud-network
+        links:
+            - zipkin-server:zipkin-server
+            - discovery-service:discovery-service
+            - account-service:account-service
+            - customer-service:customer-service
+        depends_on:
+            - zipkin-server
+            - discovery-service
+            - account-service
+            - customer-service            
+        logging:
+            driver: json-file
+networks:
+    spring-cloud-network:
+        driver: bridge
+volumes:
+    spring-cloud-config-repo:
+        external: true
