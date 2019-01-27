@@ -21,13 +21,11 @@ public class CustomerEndpoint {
 	
 	@Autowired
 	private AccountClient accountClient;
-	
-	 private static final Logger logger = LoggerFactory.getLogger(CustomerEndpoint.class);
-	
-	//protected Logger logger = Logger.getLogger(CustomerEndpoint.class.getName());
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(CustomerEndpoint.class);
+
 	private List<Customer> customers;
-	
+
 	public CustomerEndpoint() {
 		customers = new ArrayList<>();
 		customers.add(new Customer(1, "12345", "Adam Kowalski", CustomerType.INDIVIDUAL));
@@ -78,4 +76,10 @@ public class CustomerEndpoint {
 		}
 		return response;
 	}
+	
+	@RequestMapping(value = "/customers/ribbon")
+	 public String backend() {
+		logger.info("backend()");
+		return accountClient.backend();
+	 }
 }

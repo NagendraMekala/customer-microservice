@@ -24,7 +24,35 @@ eureka:
   instance:
     leaseRenewalIntervalInSeconds: 1
     leaseExpirationDurationInSeconds: 2
-          
+    
+account-service:        
+    listOfServers:
+      localhost: 2222,localhost:2223
+      
 ribbon:
-  eureka:
-    enabled: true 
+    eureka:
+      enabled: true
+    MaxAutoRetries: 0
+    MaxAutoRetriesNextServer: 0
+    ReadTimeout: 2000
+#Enable for Scenarios 1,2,3
+#feign:
+#  hystrix:
+#    enabled: false
+    
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 1000
+feign:
+  hystrix:
+    enabled: true
+    
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream, info, health

@@ -9,6 +9,7 @@ import zipkin.server.EnableZipkinServer;
 @EnableZipkinServer
 public class ZipkinServerApplication {
 
+	//http://localhost:9411/zipkin/
 	public static void main(String[] args) {
 		SpringApplication.run(ZipkinServerApplication.class, args);
 	}

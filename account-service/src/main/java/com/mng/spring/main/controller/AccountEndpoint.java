@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,19 +23,20 @@ public class AccountEndpoint {
 
 	private List<Account> accounts;
 	
-	 private static final Logger logger = LoggerFactory.getLogger(AccountEndpoint.class);
-	
-	//protected Logger logger = Logger.getLogger(AccountEndpoint.class.getName());
-	
+    @Autowired
+    Environment environment;
+
+	private static final Logger logger = LoggerFactory.getLogger(AccountEndpoint.class);
+
 	public AccountEndpoint() {
 		accounts = new ArrayList<>();
-		accounts.add(new Account(1, 1, "111111","Nagendra"));
-		accounts.add(new Account(2, 2, "222222","Scala"));
-		accounts.add(new Account(3, 3, "333333","java"));
-		accounts.add(new Account(4, 4, "444444","spark"));
-		accounts.add(new Account(5, 1, "555555","spring"));
-		accounts.add(new Account(6, 2, "666666","angular"));
-		accounts.add(new Account(7, 2, "777777","docker"));
+		accounts.add(new Account(1, 1, "111111", "Nagendra"));
+		accounts.add(new Account(2, 2, "222222", "Scala"));
+		accounts.add(new Account(3, 3, "333333", "java"));
+		accounts.add(new Account(4, 4, "444444", "spark"));
+		accounts.add(new Account(5, 1, "555555", "spring"));
+		accounts.add(new Account(6, 2, "666666", "angular"));
+		accounts.add(new Account(7, 2, "777777", "docker"));
 	}
 	
 	@RequestMapping("/accounts/{number}")
@@ -84,6 +87,17 @@ public class AccountEndpoint {
             rsp = sStackTrace;
         }
         return rsp;
+    }
+    
+    @RequestMapping("/accounts/ribbon")
+    public String backend() {
+        System.out.println("Inside MyRestController::backend...");
+ 
+        String serverPort = environment.getProperty("local.server.port");
+ 
+        System.out.println("Port : " + serverPort);
+ 
+        return "Hello form Backend!!! " + " Host : localhost " + " :: Port : " + serverPort;
     }
 	
 }
